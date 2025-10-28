@@ -1,33 +1,35 @@
 app:
-    name: Postgres Master
-    code: POSTGRES
-    notify: appzdev@cloudbourne.co
+    name: mbk-postgres
+    code: MBK-POSTGRES
+    notify: rniranjan@ecloudcontrol.com
     
 build:
-    version: 12.2
+    version: 17.1
     env: DEV
     build_file: none
     output_files: output/*.zip
-    image_template: postgres_master-12.2
-    image_name: alpha/postgres_master
+    image_template: postgres_master-17.1
     
 deploy:
-    context: alpha/DEV
+    context: niranjan-ragi/DEV
     type: statefulset
+    resources: x-large
     replicas: 1
     port:
     - 5432
+    - 8006
+    - 9187 
+    ingress: none
     
 volumes:
-  - claim: postgres-master-data
+  - claim: mbk-postgres-data
     mount: /appz/data
     name: data
     size: 5Gi
-    mode: ReadWriteOnce
-    class: microk8s-hostpath   
-    
-monitor:
-    notify: appzops@cloudbourne.co      
+  - claim: mbk-postgres-backup
+    mount: /appz/backup
+    name: backup
+    size: 5Gi
     
 properties:
     POSTGRESQL_REPLICATION_MODE: master
@@ -40,10 +42,9 @@ properties:
     POSTGRESQL_SYNCHRONOUS_COMMIT_MODE: on
     POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS: 1
     POSTGRESQL_REP_USER: replica
+    ENABLE_BACKUP_METRIC: 1
     PGPASSWORD: 
       vault: PGPASSWORD
-    APPUSER_PASSWORD:
-      vault: APPUSER_PASSWORD
-    APPZ_RESTORE_TOKEN: 20200810-1217
-    APPZ_LOAD_TOKEN: 20200810-1217
-    revision : 56
+    POSTGRESQL_MBK_PASSWORD:
+      vault: POSTGRESQL_MBK_PASSWORD
+    revision : 18
