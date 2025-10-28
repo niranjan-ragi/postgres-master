@@ -47,4 +47,4 @@ properties:
       vault: PGPASSWORD
     POSTGRESQL_MBK_PASSWORD:
       vault: POSTGRESQL_MBK_PASSWORD
-    revision : 19
+    revision : 2
